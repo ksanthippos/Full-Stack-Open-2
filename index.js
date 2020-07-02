@@ -1,46 +1,114 @@
 const express = require('express')
 const app = express()
+app.use(express.json())
 
-let notes = [
-    {
-        id: 1,
-        content: "HTML is easy",
-        date: "2020-01-10T17:30:31.098Z",
-        important: true
-    },
-    {
-        id: 2,
-        content: "Browser can execute only Javascript",
-        date: "2020-01-10T18:39:34.091Z",
-        important: false
-    },
-    {
-        id: 3,
-        content: "GET and POST are the most important methods of HTTP protocol",
-        date: "2020-01-10T19:20:14.298Z",
-        important: true
-    }
+let persons = [
+        {
+            "name": "Arto Hellas",
+            "number": "040-123456",
+            "id": 1
+        },
+        {
+            "name": "Ada Lovelace",
+            "number": "39-44-5323523",
+            "id": 2
+        },
+        {
+            "name": "Dan Abramov",
+            "number": "12-43-234345",
+            "id": 3
+        },
+        {
+            "name": "Mary Poppendieck",
+            "number": "39-23-6423122",
+            "id": 4
+        }
 ]
 
+// GET
 app.get('/', (req, res) => {
-    res.send('<h1>Hello!</h1>')
+    res.send('<h1>Phonebook root</h1>')
 })
 
-app.get('/api/notes/:id', (req, res) => {
-    const id = Number(req.params.id)    // json-muodossa id on merkkijono --> muunnos luvuksi
-    const note = notes.find(note => note.id === id)
+app.get('/info', (req, res) => {
 
-    if (note)
-        res.json(note)
+    const maxId = persons.length > 0
+        ? Math.max(...persons.map(n => n.id))
+        : 0
+
+    res.send('<h1>Phonebook info</h1>' +
+        'Phonebook has info for ' + maxId + ' people <p/>' +
+        new Date()
+        )
+})
+
+app.get('/api/persons', (req, res) => {
+    if (persons)
+        res.json(persons)
     else
         res.status(404).end()
 })
 
-app.delete(`/api/notes/:id`, (req, res) => {
+
+app.get('/api/persons/:id', (req, res) => {
+    const id = Number(req.params.id)    // json-muodossa id on merkkijono --> muunnos luvuksi
+    const person = persons.find(person => person.id === id)
+
+    if (person)
+        res.json(person)
+    else
+        res.status(404).end()
+})
+
+// DELETE
+app.delete(`/api/persons/:id`, (req, res) => {
     const id = Number(req.params.id)
-    notes = notes.filter(note => note.id !== id)
+    persons = persons.filter(person => person.id !== id)
 
     res.status(204).end()
+})
+
+
+// POST
+const generateId = () => {
+    const maxId = persons.length > 0
+        ? Math.max(...persons.map(n => n.id))
+        : 0
+    return maxId + 1
+}
+
+app.post('/api/persons', (req, res) => {
+
+    const body = req.body
+
+    if (!body.name || !body.number) {    // ei hyväksytä tyhjää contentia
+        return res.status(400).json({
+            error: 'content missing'
+        })
+    }
+
+    // ei hyväksytä samoja nimiä
+    const found = persons.filter(person => person.name === body.name)
+
+    if (found !== null) {
+        console.log("Duplicate found!")
+        return res.status(400).json({
+            error: 'duplicate name'
+        })
+    }
+    else {
+        console.log("No duplicates.")
+    }
+
+
+    const person = {
+        name: body.name,
+        number: body.number,
+        id: generateId(),
+    }
+    persons = persons.concat(person)
+
+    res.json(person)
 })
 
 const PORT = 3001
