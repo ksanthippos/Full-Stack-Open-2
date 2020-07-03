@@ -1,25 +1,22 @@
 {
-  "name": "notes-backend",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "backend",
+  "version": "0.0.0",
+  "private": true,
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "build:ui": "rm -rf build && cd ../../../2/luento/notes && npm run build && cp -r build ../../../3/luento/notes-backend",
-    "deploy": "git push heroku master",
-    "deploy:full": "npm run build:ui && git add part3-notes-backend-part3-3 && git commit -m uibuild && git push && npm run deploy",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "logs:prod": "heroku logs --tail"
-  },
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "nodemon": "^2.0.2"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "cookie-parser": "~1.4.4",
     "cors": "^2.8.5",
-    "express": "^4.17.1",
-    "mongoose": "^5.8.9"
+    "debug": "~2.6.9",
+    "express": "~4.16.1",
+    "http-errors": "~1.6.3",
+    "morgan": "~1.9.1",
+    "pug": "2.0.0-beta11"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
   }
 }
