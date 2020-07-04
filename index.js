@@ -1,8 +1,11 @@
+require('dotenv').config()
 const express = require('express')
-const morgan = require('morgan')
-const cors = require('cors')
 const app = express()
 
+// mongoDB
+const Person = require('./models/persons')
+const morgan = require('morgan')
+const cors = require('cors')
 app.use(cors())
 app.use(express.json())
 app.use(express.static('build'))
@@ -19,36 +22,13 @@ const generateId = () => {
     return maxId + 1
 }
 
-// data
-let persons = [
-        {
-            "name": "Arto Hellas",
-            "number": "040-123456",
-            "id": 1
-        },
-        {
-            "name": "Ada Lovelace",
-            "number": "39-44-5323523",
-            "id": 2
-        },
-        {
-            "name": "Dan Abramov",
-            "number": "12-43-234345",
-            "id": 3
-        },
-        {
-            "name": "Mary Poppendieck",
-            "number": "39-23-6423122",
-            "id": 4
-        }
-]
 
-// GET
+// ROOT
 app.get('/', (req, res) => {
     res.send('<h1>Phonebook root</h1>')
 })
 
-app.get('/info', (req, res) => {
+/*app.get('/info', (req, res) => {
 
     const maxId = persons.length > 0
         ? Math.max(...persons.map(n => n.id))
@@ -58,16 +38,20 @@ app.get('/info', (req, res) => {
         'Phonebook has info for ' + maxId + ' people <p/>' +
         new Date()
         )
-})
+})*/
 
+// GET ALL
 app.get('/api/persons', (req, res) => {
-    if (persons)
+/*    if (persons)
         res.json(persons)
     else
-        res.status(404).end()
+        res.status(404).end()*/
+    Person.find({}).then(notes => {
+        res.json(notes)
+    })
 })
 
-app.get('/api/persons/:id', (req, res) => {
+/*app.get('/api/persons/:id', (req, res) => {
     const id = Number(req.params.id)    // json-muodossa id on merkkijono --> muunnos luvuksi
     const person = persons.find(person => person.id === id)
 
@@ -75,23 +59,32 @@ app.get('/api/persons/:id', (req, res) => {
         res.json(person)
     else
         res.status(404).end()
-})
+})*/
 
 
-// DELETE
+/*// DELETE
 app.delete(`/api/persons/:id`, (req, res) => {
     const id = Number(req.params.id)
     persons = persons.filter(person => person.id !== id)
 
     res.status(204).end()
-})
+})*/
 
 
 // POST
 app.post('/api/persons', (req, res) => {
     const body = req.body
 
-    // tyhjä nimi tai numero --> ei hyväksytä
+    const person = new Person({
+        name: body.name,
+        number: body.number,
+    })
+
+    person.save().then(saved => {
+        res.json(saved)
+    })
+
+/*    // tyhjä nimi tai numero --> ei hyväksytä
     if (!body.name || !body.number) {
         return res.status(400).json({
             error: 'content missing'
@@ -115,11 +108,11 @@ app.post('/api/persons', (req, res) => {
     }
 
     persons = persons.concat(person)
-    res.json(person)
+    res.json(person)*/
 })
 
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
