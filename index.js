@@ -22,7 +22,6 @@ const generateId = () => {
     return maxId + 1
 }
 
-
 // ROOT
 app.get('/', (req, res) => {
     res.send('<h1>Phonebook root</h1>')
@@ -62,13 +61,14 @@ app.get('/api/persons', (req, res) => {
 })*/
 
 
-/*// DELETE
+// DELETE
 app.delete(`/api/persons/:id`, (req, res) => {
-    const id = Number(req.params.id)
-    persons = persons.filter(person => person.id !== id)
-
-    res.status(204).end()
-})*/
+    Person.findByIdAndRemove(req.params.id)
+        .then(result => {
+            res.status(204).end()
+        })
+        .catch(error => next(error))
+})
 
 
 // POST
@@ -111,6 +111,20 @@ app.post('/api/persons', (req, res) => {
     res.json(person)*/
 })
 
+// virheiden käsittely
+const errorHandler = (error, request, response, next) => {
+    console.error(error.message)
+
+    if (error.name === 'CastError') {
+        return response.status(400).send({
+            error: 'wrong id'
+        })
+    }
+
+    next(error)
+}
+
+app.use(errorHandler)
 
 const PORT = process.env.PORT
 
