@@ -98,7 +98,6 @@ const errorHandler = (error, request, response, next) => {
 
 app.use(errorHandler)
 
-
 // PORTTI
 const PORT = process.env.PORT
 app.listen(PORT, () => {
