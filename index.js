@@ -3,7 +3,6 @@ const app = express()
 const cors = require('cors')
 const mongoose = require('mongoose')
 
-
 const config = require('./utils/config')
 
 const blogSchema = mongoose.Schema({
