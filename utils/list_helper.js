@@ -1,4 +1,5 @@
 // testejä varten
+const _ = require('lodash')
 
 const dummy = (blogs) => {
   return 1
@@ -29,4 +30,34 @@ const favoriteBlog = (blogs) => {
 
 }
 
-module.exports = { dummy, totalLikes, favoriteBlog }
+
+
+const mostBlogs = (blogs) => {
+
+  const authors = []
+
+  // erotellaan nimet omaan taulukkoon
+  blogs.map(blog => {
+    authors.push(blog.author)
+  })
+
+  // katsotaan kenen nimi esiintyy useimmin
+  const author = _.head(_(authors)
+      .countBy()
+      .entries()
+      .maxBy(_.last)
+  )
+
+  // lasketaan suosituimman nimen esiintymiskerrat
+  let count = 0
+  authors.filter(match => {
+    match === author
+      ? count++
+      : 0
+  })
+
+  return { author: author, blogs: count }
+
+}
+
+module.exports = { dummy, totalLikes, favoriteBlog, mostBlogs }
