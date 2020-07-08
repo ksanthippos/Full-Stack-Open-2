@@ -1,6 +1,6 @@
 const listHelper = require('../utils/list_helper')
 
-describe('most blogs', () => {
+describe('most likes', () => {
     const listWithManyBlogs = [
         {
             _id: '5a422aa71b54a676234d17f8',
@@ -23,7 +23,7 @@ describe('most blogs', () => {
             title: 'Hevosblogi',
             author: 'Jesse James',
             url: 'http://ihhahhaa.com',
-            likes: 454,
+            likes: 3,
             __v: 2
         },
         {
@@ -31,7 +31,7 @@ describe('most blogs', () => {
             title: 'Outlaw-blogi',
             author: 'Jesse James',
             url: 'http://outlaw.com',
-            likes: 1222,
+            likes: 12,
             __v: 3
         },
         {
@@ -39,13 +39,13 @@ describe('most blogs', () => {
             title: 'Colt-blogi',
             author: 'Jesse James',
             url: 'http://bangbang.com',
-            likes: 654,
+            likes: 13,
             __v: 4
         }
     ]
 
-    test('author with bost blogs', () => {
-        const result = listHelper.mostBlogs(listWithManyBlogs)
-        expect(result).toEqual({author: "Jesse James", blogs: 3})
+    test('author with most (total) likes', () => {
+        const result = listHelper.mostLikes(listWithManyBlogs)
+        expect(result).toEqual({author: "Jesse James", likes: 28})
     })
 })

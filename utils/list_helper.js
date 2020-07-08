@@ -60,4 +60,47 @@ const mostBlogs = (blogs) => {
 
 }
 
-module.exports = { dummy, totalLikes, favoriteBlog, mostBlogs }
+const mostLikes = (blogs) => {
+
+  const namesToArray = []
+
+  // erotellaan nimet omaan taulukkoon
+  blogs.map(blog => {
+    namesToArray.push(blog.author)
+  })
+
+  // poistetaan tupla yms kappaleet
+  const authors = _.sortedUniq(namesToArray)
+
+  const authorObjects = []
+
+  // lisätään taulukkoon oliot, joissa kirjoittajan nimi ja total tykkäykset
+  authors.map(a => {
+    const authorObject = {
+      author: a,
+      likes: 0
+    }
+    blogs.find(blog => {
+      if(blog.author === a)
+        authorObject.likes += blog.likes
+    })
+
+    authorObjects.push(authorObject)
+  })
+
+  // selvitetään edellisestä taulukosta, kenellä suurimmat tykkäykset
+  let maxLikes = authorObjects[0].likes
+  let likedAuthor = authorObjects[0].author
+
+  authorObjects.map(authorObject => {
+    if (authorObject.likes > maxLikes) {
+      maxLikes = authorObject.likes
+      likedAuthor = authorObject.author
+    }
+  })
+
+  return { author: likedAuthor, likes: maxLikes }
+
+}
+
+module.exports = { dummy, totalLikes, favoriteBlog, mostBlogs, mostLikes }
