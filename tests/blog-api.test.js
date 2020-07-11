@@ -26,3 +26,16 @@ test('number of blogs is correct', async () => {
     expect(response.body).toHaveLength(helper.initialBlogs.length)
 })
 
+// palautetuissa blogeissa on id (ei käytetty toBeDefinedia)
+test('blongs are returned with id keys', async () => {
+    const response = await api.get('/api/blogs')
+    // tallennetaan vastauksesta avaimet taulukkoon
+    const keyArray = response.body.map(r => Object.keys(r))
+    // taulukon läpikäynti
+    keyArray.map(key => expect(key).toContain('id'))
+})
+
+
+afterAll(() => {
+    mongoose.connection.close()
+})
