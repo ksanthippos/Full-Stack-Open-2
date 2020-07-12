@@ -29,8 +29,11 @@ test('number of blogs is correct', async () => {
 // palautetuissa blogeissa on id (ei käytetty toBeDefinedia)
 test('blongs are returned with id keys', async () => {
     const response = await api.get('/api/blogs')
+
     // tallennetaan vastauksesta avaimet taulukkoon
     const keyArray = response.body.map(r => Object.keys(r))
+
+    // tarkistetaan että taulukosta löytyy avain id
     keyArray.map(key => expect(key).toContain('id'))
 })
 
@@ -49,11 +52,11 @@ test('a new blog can be added', async () => {
         title: 'test blog',
         author: 'test author',
         url: 'www.test.com',
-        likes: 12
+        likes: 12,
     }
 
     await api
-        .post('/apí/blogs')
+        .post('/api/blogs')
         .send(newBlog)
         .expect(200)
         .expect('Content-type', /application\/json/)
@@ -66,7 +69,7 @@ test('a new blog can be added', async () => {
 
 })
 
-test('blog without title is not added', async () => {
+/*test('blog without title is not added', async () => {
     const newBlog = {
         author: 'anonymous',
         url: 'www.nowhere.com',
@@ -80,7 +83,7 @@ test('blog without title is not added', async () => {
 
     const blogsAtEnd = await helper.blogsInDb()
     expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
-})
+})*/
 
 
 afterAll(() => {
