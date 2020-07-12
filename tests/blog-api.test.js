@@ -96,6 +96,24 @@ test('blog without title or url will not be added', async () => {
     expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
 })
 
+test('not defining likes results default likes 0', async () => {
+    const noLikes = {
+        title: 'dont mind any likes',
+        author: 'mr zero',
+        url: 'www.dontlikethis.com',
+    }
+
+    await api
+        .post('/api/blogs')
+        .send(noLikes)
+        .expect(200)
+
+    const currentBlogs = await helper.blogsInDb()
+    expect(currentBlogs).toHaveLength(helper.initialBlogs.length + 1)
+
+    const previousBlog = currentBlogs.find(b => b.title === 'dont mind any likes')
+    expect(previousBlog.likes).toEqual(0)
+})
 
 afterAll(() => {
     mongoose.connection.close()
