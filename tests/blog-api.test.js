@@ -69,21 +69,32 @@ test('a new blog can be added', async () => {
 
 })
 
-/*test('blog without title is not added', async () => {
-    const newBlog = {
+test('blog without title or url will not be added', async () => {
+    const noTitle = {
         author: 'anonymous',
-        url: 'www.nowhere.com',
-        likes: 6
+        url: 'www.notitlehere.com',
+        likes: 0
+    }
+
+    const noUrl = {
+        title: 'nowhere to go',
+        author: 'anonymous',
+        likes: 0
     }
 
     await api
         .post('/api/blogs')
-        .send(newBlog)
+        .send(noTitle)
+        .expect(400)
+
+    await api
+        .post('/api/blogs')
+        .send(noUrl)
         .expect(400)
 
     const blogsAtEnd = await helper.blogsInDb()
     expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
-})*/
+})
 
 
 afterAll(() => {
