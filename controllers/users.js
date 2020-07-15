@@ -5,6 +5,12 @@ const User = require('../models/user')
 usersRouter.post('/', async (request, response) => {
     const body = request.body
 
+    // tarkistetaan salasanan pituus
+    if (body.password.length < 3)
+        return response.status(400).json({
+            error: 'password length minimum length is 3 characters'
+        })
+
     const saltRounds = 10
     const passwordHash = await bcrypt.hash(body.password, saltRounds)
 
