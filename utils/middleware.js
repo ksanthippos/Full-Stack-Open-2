@@ -27,6 +27,11 @@ const errorHandler = (error, request, response, next) => {
       error: error.message
     })
   }
+  else if (error.name === 'JsonWebTokenError') {
+    return response.status(401).json({
+      error: 'invalid token'
+    })
+  }
 
   next(error)
 }
