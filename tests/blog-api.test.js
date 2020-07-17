@@ -10,12 +10,34 @@ const User = require('../models/user')
 beforeEach(async () => {
     await Blog.deleteMany({})
     await Blog.insertMany(helper.initialBlogs)
-
-    await User.deleteMany({})
-    const user = new User({ username: 'testi', password: 'salainen' })
-    await user.save()
 })
 
+// tallennetaan token
+let token = ''
+beforeAll(async (done) => {
+
+    await User.deleteMany({})
+    const newUser = {
+        username: 'testi',
+        password: 'salainen'
+    }
+
+    await api
+        .post('/api/users')
+        .send(newUser)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+
+    const response = await api
+        .post('/api/login')
+        .send({
+            username: newUser.username,
+            password: newUser.password
+        })
+
+    token = response.body.token
+    done()
+})
 
 // GET
 test('blogs are returned as JSON', async () => {
@@ -48,17 +70,6 @@ test('finds a matching blog', async () => {
 
 // POST
 test('a new blog can be added', async () => {
-
-    const response = await api
-        .post('/api/login')
-        .send({
-            username: 'testi',
-            password: 'salainen'
-        })
-
-    const token = response.body.token
-    console.log('TOKEN VALUE:', token)
-
     const newBlog =  {
         title: 'test blog',
         author: 'test author',
@@ -96,11 +107,13 @@ test('blog without title or url will not be added', async () => {
 
     await api
         .post('/api/blogs')
+        .set('Authorization', `bearer ${token}`)
         .send(noTitle)
         .expect(400)
 
     await api
         .post('/api/blogs')
+        .set('Authorization', `bearer ${token}`)
         .send(noUrl)
         .expect(400)
 
@@ -117,6 +130,7 @@ test('not defining likes results default likes 0', async () => {
 
     await api
         .post('/api/blogs')
+        .set('Authorization', `bearer ${token}`)
         .send(noLikes)
         .expect(200)
 
@@ -135,6 +149,7 @@ test('single blog can be deleted', async () => {
 
     await api
         .delete(`/api/blogs/${blogId}`)
+        .set('Authorization', `bearer ${token}`)
         .expect(204)
 
     const afterDeletionBlogs = await helper.blogsInDb()
