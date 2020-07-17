@@ -5,10 +5,26 @@ const helper = require('./test_helper')
 const api = supertest(app)
 
 const Blog = require('../models/blog')
+const User = require('../models/user')
+let token = ''
 
 beforeEach(async () => {
     await Blog.deleteMany({})
     await Blog.insertMany(helper.initialBlogs)
+})
+
+getToken((done) => {
+    api
+        .post('/api/login')
+        .send({
+            username: 'testaaja',
+            password: 'salainen'
+        })
+        .end((error, response) => {
+            token = response.body.token
+            console.log('token is:', token)
+            done()
+        })
 })
 
 // GET
@@ -52,6 +68,7 @@ test('a new blog can be added', async () => {
 
     await api
         .post('/api/blogs')
+        .set('Authorization', `bearer ${token}`)
         .send(newBlog)
         .expect(200)
         .expect('Content-type', /application\/json/)
