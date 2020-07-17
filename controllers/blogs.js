@@ -26,14 +26,12 @@ blogsRouter.get('/', async (req, res) => {
 blogsRouter.post('/', async (req, res) => {
   const body = req.body
 
-  // varmistetaan tokenin oikeellisuus
-  const token = getTokenFrom(req)
-  const decodedToken = jwt.verify(token, process.env.SECRET)
-  if (!token || !decodedToken.id)
+  const decodedToken = jwt.verify(req.token, process.env.SECRET)
+  if (!req.token || !decodedToken.id)
     return res.status(401).json({ error: 'token missing or invalid' })
 
-  // käyttäjä tunnistettu
-  const user = await User.findById(body.userId)
+  // user id saadaan tokenista
+  const user = await User.findById(decodedToken.id)
 
   const blog = new Blog({
     title: body.title,
@@ -52,6 +50,12 @@ blogsRouter.post('/', async (req, res) => {
 
 // DELETE
 blogsRouter.delete('/:id', async (req, res) => {
+
+/*  const token = getTokenFrom(req)
+  const decodedToken = jwt.verify(token, process.env.SECRET)
+  if (!token || !decodedToken.id)
+    return res.status(401).json({ error: 'token missing or invalid' })*/
+
   await Blog.findByIdAndRemove(req.params.id)
   res.status(204).end()
 })
