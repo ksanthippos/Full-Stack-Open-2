@@ -6,26 +6,16 @@ const api = supertest(app)
 
 const Blog = require('../models/blog')
 const User = require('../models/user')
-let token = ''
 
 beforeEach(async () => {
     await Blog.deleteMany({})
     await Blog.insertMany(helper.initialBlogs)
+
+    await User.deleteMany({})
+    const user = new User({ username: 'testi', password: 'salainen' })
+    await user.save()
 })
 
-getToken((done) => {
-    api
-        .post('/api/login')
-        .send({
-            username: 'testaaja',
-            password: 'salainen'
-        })
-        .end((error, response) => {
-            token = response.body.token
-            console.log('token is:', token)
-            done()
-        })
-})
 
 // GET
 test('blogs are returned as JSON', async () => {
@@ -56,9 +46,19 @@ test('finds a matching blog', async () => {
     expect(titles).toContain('Most stupid blog evr')
 })
 
-
 // POST
 test('a new blog can be added', async () => {
+
+    const response = await api
+        .post('/api/login')
+        .send({
+            username: 'testi',
+            password: 'salainen'
+        })
+
+    const token = response.body.token
+    console.log('TOKEN VALUE:', token)
+
     const newBlog =  {
         title: 'test blog',
         author: 'test author',
@@ -71,7 +71,7 @@ test('a new blog can be added', async () => {
         .set('Authorization', `bearer ${token}`)
         .send(newBlog)
         .expect(200)
-        .expect('Content-type', /application\/json/)
+        .expect('Content-Type', /application\/json/)
 
     const blogsAtEnd = await helper.blogsInDb()
     expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
