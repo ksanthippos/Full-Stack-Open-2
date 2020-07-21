@@ -1,1 +1,0 @@
-Osoite Herokussa: https://glacial-wildwood-66805.herokuapp.com/ 
