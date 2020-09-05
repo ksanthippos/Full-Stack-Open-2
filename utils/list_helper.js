@@ -1,7 +1,7 @@
 // testejä varten
 const _ = require('lodash')
 
-const dummy = (blogs) => {
+const dummy = () => {
   return 1
 }
 
@@ -17,9 +17,9 @@ const totalLikes = (blogs) => {
 const favoriteBlog = (blogs) => {
 
   const blog = blogs.reduce((prev, current) =>
-      (prev.likes > current.likes)
-          ? prev
-          : current
+    (prev.likes > current.likes)
+      ? prev
+      : current
   )
 
   const title = blog.title
@@ -43,9 +43,9 @@ const mostBlogs = (blogs) => {
 
   // katsotaan kenen nimi esiintyy useimmin
   const author = _.head(_(authors)
-      .countBy()
-      .entries()
-      .maxBy(_.last)
+    .countBy()
+    .entries()
+    .maxBy(_.last)
   )
 
   // lasketaan suosituimman nimen esiintymiskerrat

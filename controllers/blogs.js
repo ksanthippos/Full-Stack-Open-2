@@ -1,15 +1,15 @@
+/* eslint-disable linebreak-style */
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 const User = require('../models/user')
 
 const jwt = require('jsonwebtoken')
 
-
 // GET ALL
 blogsRouter.get('/', async (req, res) => {
   const blogs = await Blog
-      .find({})
-      .populate('user', { username: 1, name: 1 })
+    .find({})
+    .populate('user', { username: 1, name: 1 })
 
   await res.json(blogs.map(blog => blog.toJSON()))
 })
@@ -70,7 +70,7 @@ blogsRouter.put('/:id', async (req, res) => {
     likes: body.likes,
   }
 
-  const updatedBlog = await Blog.findByIdAndUpdate(req.params.id, blog, {new: true, })
+  const updatedBlog = await Blog.findByIdAndUpdate(req.params.id, blog, { new: true, })
   await res.json(updatedBlog.toJSON())
 })
 

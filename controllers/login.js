@@ -1,40 +1,42 @@
+/* eslint-disable linebreak-style */
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const loginRouter = require('express').Router()
 const User = require('../models/user')
 
 loginRouter.post('/', async (request, response) => {
-    const body = request.body
+  const body = request.body
+  // eslint-disable-next-line linebreak-style
 
-    // etsitään käyttäjänimellä
-    const user = await User.findOne({ username: body.username })
-    // bcrypt tarkistaa salasanan hashin
-    const passwordCorrect = user === null
-        ? false
-        : await bcrypt.compare(body.password, user.passwordHash)
+  // etsitään käyttäjänimellä
+  const user = await User.findOne({ username: body.username })
+  // bcrypt tarkistaa salasanan hashin
+  const passwordCorrect = user === null
+    ? false
+    : await bcrypt.compare(body.password, user.passwordHash)
 
-    if (!(user && passwordCorrect)) {
-        return response.status(401).json({
-            error: 'invalid username or password'
-        })
-    }
+  if (!(user && passwordCorrect)) {
+    return response.status(401).json({
+      error: 'invalid username or password'
+    })
+  }
 
-    const userForToken = {
-        username: user.username,
-        id: user._id
-    }
+  const userForToken = {
+    username: user.username,
+    id: user._id
+  }
 
-    // allekirjoitetaan token
-    const token = jwt.sign(userForToken, process.env.SECRET)
+  // allekirjoitetaan token
+  const token = jwt.sign(userForToken, process.env.SECRET)
 
-    // käyttäjä tunnistettu, lähetetään token selaimelle vastauksen mukana
-    response
-        .status(200)
-        .send({
-            token,
-            username: user.username,
-            name: user.name
-        })
+  // käyttäjä tunnistettu, lähetetään token selaimelle vastauksen mukana
+  response
+    .status(200)
+    .send({
+      token,
+      username: user.username,
+      name: user.name
+    })
 })
 
 module.exports = loginRouter
