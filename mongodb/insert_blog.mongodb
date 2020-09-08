@@ -1,0 +1,42 @@
+// MongoDB Playground
+// Use Ctrl+Space inside a snippet or a string literal to trigger completions.
+
+// The current database to use.
+use('bloglist-app');
+
+// Search for documents in the current collection.
+db.getCollection('blogs')
+  .find(
+    {
+      /*
+      * Filter
+      * fieldA: value or expression
+      */
+    },
+    {
+      /*
+      * Projection
+      * _id: 0, // exclude _id
+      * fieldA: 1 // include field
+      */
+    }
+  )
+  .sort({
+    /*
+    * fieldA: 1 // ascending
+    * fieldB: -1 // descending
+    */
+  });
+
+db.getCollection('blogs').insert(
+    {
+    "title": "Tanelta",
+    "author": "GG",
+    "url": "cdsd",
+    "likes": 1,
+    "user": "5f0f371191afb71b0cbe2a04",
+    "__v": 0
+  }
+)
+
+
