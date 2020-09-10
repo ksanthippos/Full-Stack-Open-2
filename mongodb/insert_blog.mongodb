@@ -30,10 +30,14 @@ db.getCollection('blogs')
 
 db.getCollection('blogs').insert(
     {
-    "title": "Tanelta",
+    "title": "Lisää kommentoituja",
     "author": "GG",
     "url": "cdsd",
-    "likes": 1,
+    "likes": 4,
+    "comments": [
+      "eka kommentti",
+      "toka kommentti"
+    ],
     "user": "5f0f371191afb71b0cbe2a04",
     "__v": 0
   }
