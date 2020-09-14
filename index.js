@@ -1,3 +1,4 @@
+
 const { ApolloServer, gql } = require('apollo-server')
 const { v1: uuid } = require('uuid')
 
@@ -133,6 +134,10 @@ const resolvers = {
         retBooks = books.filter(b => b.author === args.author)
       }
 
+      if (!args.genre && !args.author) {
+        return books
+      }
+      
       return retBooks
     },
     allAuthors: () => authors
