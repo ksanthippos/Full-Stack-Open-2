@@ -113,8 +113,8 @@ const typeDefs = gql`
       genres: [String!]!
     ): Book
     editAuthor(
-      name: String,
-      setBornTo: Int
+      name: String!,
+      setBornTo: Int!
     ): Author
   }
 `
@@ -151,19 +151,12 @@ const resolvers = {
   },
   Mutation: {
     addBook: (root, args) => {
-      let book, author
+      let book
 
       if (authors.find(a => a.name === args.author)) {
         book = { ...args, id: uuid() }      
       }
-      else {
-        author = { 
-          ...args, 
-          name: args.author, 
-          born: args.born ? args.born : null,
-          id: uuid()        
-        }
-        console.log(author)    
+      else {      
         book = { ...args, author: args.author, id: uuid() }
       }
       
@@ -172,6 +165,7 @@ const resolvers = {
     },
     editAuthor: (root, args) => {
       const author = authors.find(a => a.name === args.name)      
+      
       if (!author)
         return null
 
