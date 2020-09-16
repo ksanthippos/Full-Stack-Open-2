@@ -2,6 +2,7 @@ const { ApolloServer, gql, UserInputError } = require('apollo-server')
 const mongoose = require('mongoose')
 const Book = require('./models/book')
 const Author = require('./models/author')
+const { v1: uuid } = require('uuid')
 const MONGODB_URI = 'mongodb+srv://fs-user:VaTb430qKlfzjh5I@cluster0.fi7eh.mongodb.net/library-gql?authSource=admin&replicaSet=atlas-a7mvq8-shard-0&readPreference=primary&retryWrites=true&ssl=true'
 
 mongoose.set('useFindAndModify', false)
@@ -53,11 +54,12 @@ const typeDefs = gql`
 const resolvers = {
   Query: {
     bookCount: () => Book.collection.countDocuments(),
+    authorCount: () => Author.collection.countDocuments(),
+    allAuthors: () => Author.find({}),
     allBooks: (root, args) => {
       return Book.find({})
     },
-    allAuthors: () => Author.find({}),
-    /* authorCount: () => authors.length,
+    /* 
     allBooks: (root, args) => {
       let retBooks = []
 
@@ -86,8 +88,10 @@ const resolvers = {
   },
   Mutation: {
     addBook: async (root, args) => {
-      const book = new Book({ ...args, id: args.Author.id })
-
+      const author = await Author.findOne({ name: args.author })
+      const book = new Book({ ...args, author: author })
+      console.log(book.author.name)
+   
       try {
         await book.save()
       }
@@ -98,19 +102,6 @@ const resolvers = {
       }
       
       return book
-
-/*       let book
-
-      if (authors.find(a => a.name === args.author)) {
-        book = { ...args, id: uuid() }      
-      }
-      else {      
-        book = { ...args, author: args.author, id: uuid() }
-      }
-      
-      books = books.concat(book)
-      return book */
-
     },
     /* editAuthor: (root, args) => {
       const author = authors.find(a => a.name === args.name)      
