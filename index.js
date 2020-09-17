@@ -68,6 +68,8 @@ const resolvers = {
       if (!args.genre) {
         return Book.find({})
       }
+
+      // args.author puuttuu vielä
     },
   },
   Author: {
@@ -93,16 +95,20 @@ const resolvers = {
       
       return book
     },
-    /* editAuthor: (root, args) => {
-      const author = authors.find(a => a.name === args.name)      
-      
-      if (!author)
+    editAuthor: async (root, args) => {
+      const author = await Author.findOne({ name: args.name })
+
+      if (!args)
         return null
 
-      const updatedAuthor = { ...args, name: args.name, born: args.setBornTo }      
-      authors = authors.map(a => a.name === args.name ? updatedAuthor : a)
-      return updatedAuthor    
-    } */
+      const id = author.id
+      const updatedAuthor = await Author.findByIdAndUpdate(
+        { _id: id },
+        { born: args.setBornTo }
+      )
+
+      return updatedAuthor
+    }
   }
 }
 
