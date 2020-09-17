@@ -61,7 +61,6 @@ const resolvers = {
     allBooks: async (root, args) => {
       if (args.genre) {
         const books = await Book.find({ genres: args.genre})
-        console.log(books)
         return books
       }
 
@@ -98,16 +97,19 @@ const resolvers = {
     editAuthor: async (root, args) => {
       const author = await Author.findOne({ name: args.name })
 
-      if (!args)
+      if (!author)
         return null
 
-      const id = author.id
       const updatedAuthor = await Author.findByIdAndUpdate(
-        { _id: id },
+        { _id: author.id },
         { born: args.setBornTo }
       )
 
-      return updatedAuthor
+      /* tämä oli ainoa temppu, jolla sain playgroundin palauttamaan päivitetyn
+      arvon. mutta vaikuttaa hieman kömpelöltä, luulisi että on helpompikin tapa? */
+      const returnedAuthor = await Author.findOne({ name: updatedAuthor.name })
+      
+      return returnedAuthor
     }
   }
 }
