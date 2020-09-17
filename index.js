@@ -1,9 +1,10 @@
+require('dotenv').config()
 const { ApolloServer, gql, UserInputError } = require('apollo-server')
 const mongoose = require('mongoose')
 const Book = require('./models/book')
 const Author = require('./models/author')
 const { v1: uuid } = require('uuid')
-const MONGODB_URI = 'mongodb+srv://fs-user:VaTb430qKlfzjh5I@cluster0.fi7eh.mongodb.net/library-gql?authSource=admin&replicaSet=atlas-a7mvq8-shard-0&readPreference=primary&retryWrites=true&ssl=true'
+const MONGODB_URI = process.env.MONGODB_URI
 
 mongoose.set('useFindAndModify', false)
 
