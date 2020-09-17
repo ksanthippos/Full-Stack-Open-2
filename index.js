@@ -58,46 +58,24 @@ const resolvers = {
     bookCount: () => Book.collection.countDocuments(),
     authorCount: () => Author.collection.countDocuments(),
     allAuthors: () => Author.find({}),
-    allBooks: (root, args) => {
-      return Book.find({})
-    },
-    /* 
-    allBooks: (root, args) => {
-      let retBooks = []
-
+    allBooks: async (root, args) => {
       if (args.genre) {
-        retBooks = books.filter(b => b.genres.includes(args.genre))
-      }
-
-      if (args.author) {
-        retBooks = books.filter(b => b.author === args.author)
-      }
-
-      if (!args.genre && !args.author) {
+        const books = await Book.find({ genres: args.genre})
+        console.log(books)
         return books
       }
-      
-      return retBooks
-    }, */
-    // allAuthors: () => authors
+
+      if (!args.genre) {
+        return Book.find({})
+      }
+    },
   },
   Author: {
     name: (root) => root.name,
-    bookCount: async (root) => {
-      const author_id = root.id
-      
+    bookCount: async (root) => {      
       const books = await Book.find({ author: root.id })    
-/*       const books = Book.count({ id: root.id }, (error, count) => {
-        console.log('count: ', count)
-      }) */
-
-      console.log('books: ', books) // palauttaa tyhjän []
       return books.length
     }
-/*     bookCount: (root) => {
-      const authorsBooks = books.filter(b => b.author === root.name)
-      return authorsBooks.length    
-    } */
   },
   Mutation: {
     addBook: async (root, args) => {
