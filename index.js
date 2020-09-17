@@ -4,6 +4,7 @@ const mongoose = require('mongoose')
 const Book = require('./models/book')
 const Author = require('./models/author')
 const { v1: uuid } = require('uuid')
+const author = require('./models/author')
 const MONGODB_URI = process.env.MONGODB_URI
 
 mongoose.set('useFindAndModify', false)
@@ -82,6 +83,17 @@ const resolvers = {
   },
   Author: {
     name: (root) => root.name,
+    bookCount: async (root) => {
+      const author_id = root.id
+      
+      const books = await Book.find({ author: root.id })    
+/*       const books = Book.count({ id: root.id }, (error, count) => {
+        console.log('count: ', count)
+      }) */
+
+      console.log('books: ', books) // palauttaa tyhjän []
+      return books.length
+    }
 /*     bookCount: (root) => {
       const authorsBooks = books.filter(b => b.author === root.name)
       return authorsBooks.length    
@@ -91,7 +103,6 @@ const resolvers = {
     addBook: async (root, args) => {
       const author = await Author.findOne({ name: args.author })
       const book = new Book({ ...args, author: author })
-      console.log(book.author.name)
    
       try {
         await book.save()
