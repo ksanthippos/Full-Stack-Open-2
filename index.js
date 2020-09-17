@@ -102,14 +102,11 @@ const resolvers = {
 
       const updatedAuthor = await Author.findByIdAndUpdate(
         { _id: author.id },
-        { born: args.setBornTo }
+        { born: args.setBornTo },
+        { new: true }
       )
 
-      /* tämä oli ainoa temppu, jolla sain playgroundin palauttamaan päivitetyn
-      arvon. mutta vaikuttaa hieman kömpelöltä, luulisi että on helpompikin tapa? */
-      const returnedAuthor = await Author.findOne({ name: updatedAuthor.name })
-      
-      return returnedAuthor
+      return updatedAuthor
     }
   }
 }
