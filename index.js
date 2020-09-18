@@ -78,16 +78,23 @@ const resolvers = {
     authorCount: () => Author.collection.countDocuments(),
     allAuthors: () => Author.find({}),
     allBooks: async (root, args) => {
-      if (args.genre) {
-        const books = await Book.find({ genres: args.genre})
-        return books
+      let books = []
+
+      if (args.author) {
+        const author = await Author.find({ name: args.author })
+        const author_id = author[0]._id
+        books = await Book.find({ author: author_id })   
       }
 
-      if (!args.genre) {
+      if (args.genre) {
+        books = await Book.find({ genres: args.genre})
+      }
+
+      if (!args.genre && !args.author) {
         return Book.find({})
       }
 
-      // args.author puuttuu vielä
+      return books
     },
     me: (root, args, context) => { 
       return context.currentUser
