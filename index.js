@@ -21,6 +21,19 @@ mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true 
     console.log('error connection to MongoDB:', error.message)
   })
 
+/* 
+Kalle Ilves, [18.09.20 15:51]
+Rivillä 28. author määritellään non-nullableksi: https://pastebin.com/ef0e7ype
+
+Mikael Rauhala, [18.09.20 15:51]
+no niin minäpä lähden tutkimaan
+
+Kalle Ilves, [18.09.20 15:52]
+Ongelmana on, että toi allBooks query ei populoi authoria, kun paluttaa booksit
+
+*/
+
+
 const typeDefs = gql`
   type Book {
     title: String!
@@ -83,15 +96,15 @@ const resolvers = {
       if (args.author) {
         const author = await Author.find({ name: args.author })
         const author_id = author[0]._id
-        books = await Book.find({ author: author_id })   
+        books = await Book.find({ author: author_id }).populate('author')
       }
 
       if (args.genre) {
-        books = await Book.find({ genres: args.genre})
+        books = await Book.find({ genres: args.genre}).populate('author')
       }
 
       if (!args.genre && !args.author) {
-        return Book.find({})
+        books = await Book.find({}).populate('author')
       }
 
       return books
