@@ -48,6 +48,7 @@ const typeDefs = gql`
     bookCount: Int!
     authorCount: Int!
     allBooks(author: String, genre: String): [Book]!
+    favoriteBooks(username: String!): [Book]!
     allAuthors: [Author]!
     me: User
   }
@@ -78,6 +79,7 @@ const resolvers = {
     bookCount: () => Book.collection.countDocuments(),
     authorCount: () => Author.collection.countDocuments(),
     allAuthors: () => Author.find({}),
+    me: (root, args, context) => { return context.currentUser },
     allBooks: async (root, args) => {
       let books = []
 
@@ -97,8 +99,12 @@ const resolvers = {
 
       return books
     },
-    me: (root, args, context) => { 
-      return context.currentUser
+    favoriteBooks: async (root, args) => {
+      let books = []
+      const user = await User.findOne({ username: args.username })
+            
+      
+      return books
     }
   },
   Author: {
