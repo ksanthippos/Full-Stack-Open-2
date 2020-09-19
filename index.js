@@ -47,7 +47,7 @@ const typeDefs = gql`
   type Query {
     bookCount: Int!
     authorCount: Int!
-    allBooks(author: String, genre: String, username: String): [Book]!
+    allBooks(author: String, genre: String): [Book]!
     allAuthors: [Author]!
     me: User
   }
@@ -82,11 +82,6 @@ const resolvers = {
     allBooks: async (root, args) => {
       let books = []
 
-      if (args.username) {
-        const user = await User.findOne({ username: args.username })
-        books = await Book.find({ genres: user.favoriteGenre }).populate('author')
-      }
-
       if (args.author) {
         const author = await Author.find({ name: args.author })
         const author_id = author[0]._id
@@ -97,7 +92,7 @@ const resolvers = {
         books = await Book.find({ genres: args.genre}).populate('author')
       }
 
-      if (!args.genre && !args.author && !args.username) {
+      if (!args.genre && !args.author) {
         books = await Book.find({}).populate('author')
       }
 
