@@ -21,18 +21,6 @@ mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true 
     console.log('error connection to MongoDB:', error.message)
   })
 
-/* 
-Kalle Ilves, [18.09.20 15:51]
-Rivillä 28. author määritellään non-nullableksi: https://pastebin.com/ef0e7ype
-
-Mikael Rauhala, [18.09.20 15:51]
-no niin minäpä lähden tutkimaan
-
-Kalle Ilves, [18.09.20 15:52]
-Ongelmana on, että toi allBooks query ei populoi authoria, kun paluttaa booksit
-
-*/
-
 
 const typeDefs = gql`
   type Book {
@@ -123,8 +111,11 @@ const resolvers = {
   Mutation: {
     addBook: async (root, args, context) => {
       const author = await Author.findOne({ name: args.author })
+      console.log("author", author)
       const book = new Book({ ...args, author: author })
+      console.log("book", book)
       const currentUser = context.currentUser
+      console.log("currentUser", currentUser)
 
       if (!currentUser) {
         throw new AuthenticationError('not authenticated')
@@ -143,6 +134,8 @@ const resolvers = {
     },
     editAuthor: async (root, args, context) => {
       const author = await Author.findOne({ name: args.name })
+      console.log("author edit", author)
+      
       const currentUser = context.currentUser
 
       if (!currentUser) {
